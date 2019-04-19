@@ -1,6 +1,7 @@
-const sidebar50 = require('../api/0.5.0/sidebar')
-const sidebar51 = require('../api/0.5.1/sidebar')
-const sidebar52 = require('../api/0.5.2/sidebar')
+const sidebar_0_5_0 = require('../api/0.5.0/sidebar')
+const sidebar_0_5_1 = require('../api/0.5.1/sidebar')
+const sidebar_0_5_2 = require('../api/0.5.2/sidebar')
+
 const glob = require('glob')
 
 // function for loading all MD files in a directory
@@ -36,7 +37,7 @@ module.exports = {
       { ga: 'UA-115585378-1' }
     ]
   ],
-  
+
   themeConfig: {
     repo: 'PrefectHQ/prefect',
     docsDir: 'docs',
@@ -59,11 +60,10 @@ module.exports = {
       }
     ],
     sidebar: {
-      '/api/0.5.2/': sidebar52.sidebar,
-      '/api/0.5.1/': sidebar51.sidebar,
-      '/api/0.5.0/': sidebar50.sidebar,
+      '/api/0.5.2/': sidebar_0_5_2.sidebar,
+      '/api/0.5.1/': sidebar_0_5_1.sidebar,
+      '/api/0.5.0/': sidebar_0_5_0.sidebar,
       '/api/unreleased/': [
-        '/api/unreleased/',
         'changelog',
         'coverage',
         {
