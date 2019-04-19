@@ -33,11 +33,10 @@ module.exports = {
   plugins: [
     [
       '@vuepress/google-analytics',
-      {
-        ga: 'UA-115585378-1'
-      }
+      { ga: 'UA-115585378-1' }
     ]
   ],
+  
   themeConfig: {
     repo: 'PrefectHQ/prefect',
     docsDir: 'docs',
@@ -184,6 +183,7 @@ module.exports = {
       ]
     }
   },
+
   extendMarkdown: md => {
     md.use(require('markdown-it-attrs'))
     md.use(require('markdown-it-checkbox'))
