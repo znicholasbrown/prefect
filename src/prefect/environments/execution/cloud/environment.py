@@ -200,7 +200,7 @@ class CloudEnvironment(Environment):
                 cluster = KubeCluster.from_dict(
                     worker_pod, namespace=prefect.context.get("namespace")
                 )
-                cluster.adapt(minimum=1, maximum=1)
+                cluster.adapt(minimum=10, maximum=10)
 
                 # Load serialized flow from file and run it with a DaskExecutor
                 with open(
