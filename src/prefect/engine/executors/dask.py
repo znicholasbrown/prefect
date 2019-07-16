@@ -82,23 +82,23 @@ class DaskExecutor(Executor):
     def _prep_dask_kwargs(self) -> dict:
         dask_kwargs = {"pure": False}  # type: dict
 
-        ## set a key for the dask scheduler UI
-        if context.get("task_full_name"):
-            key = context.get("task_full_name", "") + "-" + str(uuid.uuid4())
-            dask_kwargs.update(key=key)
-
-        ## infer from context if dask resources are being utilized
-        dask_resource_tags = [
-            tag
-            for tag in context.get("task_tags", [])
-            if tag.lower().startswith("dask-resource")
-        ]
-        if dask_resource_tags:
-            resources = {}
-            for tag in dask_resource_tags:
-                prefix, val = tag.split("=")
-                resources.update({prefix.split(":")[1]: float(val)})
-            dask_kwargs.update(resources=resources)
+#        ## set a key for the dask scheduler UI
+#        if context.get("task_full_name"):
+#            key = context.get("task_full_name", "") + "-" + str(uuid.uuid4())
+#            dask_kwargs.update(key=key)
+#
+#        ## infer from context if dask resources are being utilized
+#        dask_resource_tags = [
+#            tag
+#            for tag in context.get("task_tags", [])
+#            if tag.lower().startswith("dask-resource")
+#        ]
+#        if dask_resource_tags:
+#            resources = {}
+#            for tag in dask_resource_tags:
+#                prefix, val = tag.split("=")
+#                resources.update({prefix.split(":")[1]: float(val)})
+#            dask_kwargs.update(resources=resources)
 
         return dask_kwargs
 
