@@ -98,6 +98,8 @@ class CloudTaskRunner(TaskRunner):
             self.logger.debug(
                 "Failed to set task state with error: {}".format(repr(exc))
             )
+            self.logger.critical("Context: {}".format(prefect.context.to_dict()))
+            self.logger.critical("State I attempted to set: {}".format(new_state.serialize()))
             raise ENDRUN(state=ClientFailed(state=new_state))
 
         if version is not None:
