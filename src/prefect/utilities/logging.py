@@ -21,11 +21,20 @@ from prefect.configuration import config
 class CloudHandler(logging.StreamHandler):
     def __init__(self) -> None:
         super().__init__()
+        logger = logging.getLogger("logging-logger")
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter(config.logging.format)
+        formatter.converter = time.gmtime  # type: ignore
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        logger.setLevel(config.logging.level)
+        self.logger = logger
         self.client = None
         self.errored_out = False
 
     def emit(self, record) -> None:  # type: ignore
         try:
+            self.logger.critical("ABOUT TO WRITE A LOG!")
             from prefect.client import Client
 
             if self.errored_out is True:
@@ -52,7 +61,10 @@ class CloudHandler(logging.StreamHandler):
                 level=level,
                 info=record_dict,
             )
-        except:
+            self.logger.critical("I WROTE THAT LOG.")
+        except Exception as exc:
+            self.logger.critical("COULDNT WRITE THAT LOG")
+            self.logger.critical(exc)
             self.errored_out = True
 
 
