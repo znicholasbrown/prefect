@@ -707,13 +707,14 @@ class TaskRunner(Runner):
         ) -> State:
             map_context = context.copy()
             map_context.update(map_index=map_index)
-            return self.run(
-                upstream_states=upstream_states,
-                # if we set the state here, then it will not be processed by `initialize_run()`
-                state=state,
-                context=map_context,
-                executor=executor,
-            )
+            with prefect.context(self.context):
+                return self.run(
+                    upstream_states=upstream_states,
+                    # if we set the state here, then it will not be processed by `initialize_run()`
+                    state=state,
+                    context=map_context,
+                    executor=executor,
+                )
 
         # generate initial states, if available
         if isinstance(state, Mapped):
