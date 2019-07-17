@@ -83,6 +83,7 @@ class TaskRunner(Runner):
         result_handler: "ResultHandler" = None,
     ):
         self.task = task
+        self.context = prefect.context.to_dict()
         self.result_handler = (
             task.result_handler
             or result_handler
@@ -92,6 +93,14 @@ class TaskRunner(Runner):
 
     def __repr__(self) -> str:
         return "<{}: {}>".format(type(self).__name__, self.task.name)
+
+    def __getstate__(self) -> dict:
+        state = self.__dict__.copy()
+        state["context"] = prefect.context.to_dict()
+        return state
+
+    def __setstate__(self, state: dict) -> None:
+        self.__dict__.update(state)
 
     def call_runner_target_handlers(self, old_state: State, new_state: State) -> State:
         """
@@ -177,32 +186,36 @@ class TaskRunner(Runner):
         Returns:
             - `State` object representing the final post-run state of the Task
         """
-        upstream_states = upstream_states or {}
-        context = context or {}
-        map_index = context.setdefault("map_index", None)
-        context["task_full_name"] = "{name}{index}".format(
-            name=self.task.name,
-            index=("" if map_index is None else "[{}]".format(map_index)),
-        )
+        with prefect.context(self.context):
+            upstream_states = upstream_states or {}
+            context = context or {}
+            map_index = context.setdefault("map_index", None)
+            context["task_full_name"] = "{name}{index}".format(
+                name=self.task.name,
+                index=("" if map_index is None else "[{}]".format(map_index)),
+            )
 
-        if executor is None:
-            executor = prefect.engine.get_default_executor_class()()
+            if executor is None:
+                executor = prefect.engine.get_default_executor_class()()
 
-        # if mapped is true, this task run is going to generate a Mapped state. It won't
-        # actually run, but rather spawn children tasks to map over its inputs. We
-        # detect this case by checking for:
-        #   - upstream edges that are `mapped`
-        #   - no `map_index` (which indicates that this is the child task, not the parent)
-        mapped = any([e.mapped for e in upstream_states]) and map_index is None
-        task_inputs = {}  # type: Dict[str, Any]
+            # if mapped is true, this task run is going to generate a Mapped state. It won't
+            # actually run, but rather spawn children tasks to map over its inputs. We
+            # detect this case by checking for:
+            #   - upstream edges that are `mapped`
+            #   - no `map_index` (which indicates that this is the child task, not the parent)
+            mapped = any([e.mapped for e in upstream_states]) and map_index is None
+            task_inputs = {}  # type: Dict[str, Any]
 
-        self.logger.info(
-            "Task '{name}': Starting task run...".format(name=context["task_full_name"])
-        )
+            self.logger.info(
+                "Task '{name}': Starting task run...".format(
+                    name=context["task_full_name"]
+                )
+            )
 
         try:
-            # initialize the run
-            state, context = self.initialize_run(state, context)
+            with prefect.context(self.context):
+                # initialize the run
+                state, context = self.initialize_run(state, context)
 
             # run state transformation pipeline
             with prefect.context(context):
