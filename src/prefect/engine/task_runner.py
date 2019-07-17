@@ -97,7 +97,7 @@ class TaskRunner(Runner):
 
     def __getstate__(self) -> dict:
         self.logger.critical("OK I'm being serialized.")
-        self.logger.critical("Here is context: {}".format(json.dumps(prefect.context.to_dict(), indent=2)))
+        self.logger.critical("Here is context: {}".format(prefect.context.to_dict()))
         state = self.__dict__.copy()
         state["context"] = prefect.context.to_dict()
         return state
