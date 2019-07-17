@@ -34,11 +34,12 @@ class CloudHandler(logging.StreamHandler):
 
     def emit(self, record) -> None:  # type: ignore
         try:
-            self.logger.critical("ABOUT TO WRITE A LOG!")
             from prefect.client import Client
 
             if self.errored_out is True:
                 return
+            self.logger.critical("ABOUT TO WRITE A LOG!")
+            self.logger.critical("CONTEXT IS: {}".format(prefect.context.to_dict()))
             if self.client is None:
                 self.client = Client()  # type: ignore
 
