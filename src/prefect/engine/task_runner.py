@@ -1,6 +1,7 @@
 import collections
 import copy
 import itertools
+import json
 import threading
 from functools import partial, wraps
 from typing import (
@@ -95,6 +96,8 @@ class TaskRunner(Runner):
         return "<{}: {}>".format(type(self).__name__, self.task.name)
 
     def __getstate__(self) -> dict:
+        self.logger.critical("OK I'm being serialized.")
+        self.logger.critical("Here is context: {}".format(json.dumps(prefect.context.to_dict(), indent=2)))
         state = self.__dict__.copy()
         state["context"] = prefect.context.to_dict()
         return state
