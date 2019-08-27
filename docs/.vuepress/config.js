@@ -36,7 +36,9 @@ module.exports = {
         ga: "UA-115585378-1"
       }
     ],
-    ["@dovyp/vuepress-plugin-clipboard-copy", true]
+    ["@dovyp/vuepress-plugin-clipboard-copy", {
+      align: 'bottom'
+    }]
   ],
   themeConfig: {
     repo: "PrefectHQ/prefect",
